@@ -26,14 +26,10 @@ for k = startK : endK
         seeds = temp(1:k);
         
         % K-means by default uses Squared Euclidean distance.
-        [clusterID, centroids, ~, pointClusterDistance] = kmeans(Data, k, 'Start', Data(seeds,:));
+        [clusterID, centroids, sumD] = kmeans(Data, k, 'Start', Data(seeds,:));
         
         % Find SSE
-        SSE = 0;
-        for i = 1:50
-           cluster = clusterID(i);
-           SSE = SSE + pointClusterDistance(i, cluster).^2; 
-        end
+        SSE = sum(sumD);
         if SSE < minSSE(k)
            minSSE(k) = SSE;
            clustering{k} = {centroids clusterID};
@@ -74,14 +70,10 @@ save('Clustering-1','clusters1','labels1','centroids1');
 randomData = randi([0 100],[50 4]);
 temp = randperm(50);
 seeds = temp(1:choice);
-[clusterID, centroids, ~, pointClusterDistance] = kmeans(randomData, choice, 'Start', randomData(seeds,:));
+[clusterID, centroids, sumD] = kmeans(randomData, choice, 'Start', randomData(seeds,:));
 
 % Find SSE
-SSE = 0;
-for i = 1:50
-   cluster = clusterID(i);
-   SSE = SSE + pointClusterDistance(i, cluster).^2; 
-end
+SSE = sum(sumD);
 fprintf('SSE value for random data: %0.2f\n',SSE);
 fprintf('Centroids for random data:\n')
 for i = 1:choice
